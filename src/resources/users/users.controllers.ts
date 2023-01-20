@@ -7,7 +7,7 @@ import {registerUser} from "./users.service"
 import UserInterface from "./users.interface"
 import config from 'config'
 
-class Users implements Controller {
+class UserController implements Controller {
     public path = '/users'
     public router = Router()
 
@@ -28,15 +28,24 @@ class Users implements Controller {
     ): Promise<Response | void> => {
         try{
 
-            const registered = registerUser(req.body)
+            const registered =  await registerUser(req.body)
             res.cookie(config.get<string>('cookie'), registered)
             res.status(200)
 
         }catch(err:any){
-            throw Error(err.message)
+            next(new HttpException(400, 'failure to create user'))
         }
     }
     private login = () => {
     
     }
+    private deleteUser = () => {
+    
+    }
+    private UpdateUser = () => {
+    
+    }
+
 }
+
+export default UserController

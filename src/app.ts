@@ -13,7 +13,7 @@ class App {
     public express: Application;
     public port: number;
 
-    constructor (controllers:  Controller[], port: number)
+    constructor (controllers:Controller[], port: number)
 
     {
         this.express = express()
