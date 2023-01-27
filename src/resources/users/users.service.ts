@@ -1,9 +1,9 @@
-import UserModel from './users.model'
+import UserModel, { UserCompare } from './users.model'
 import userInterface from './users.interface'
 import jwt from '@/utils/auth/jwt'
 
 
-const findUser = async (username: string) : Promise<userInterface| null> => {
+const findUser = async (username: string) : Promise<typeof UserModel| null> => {
     try {
         return await UserModel.findOne({username})
     } catch(err){
@@ -17,7 +17,7 @@ const registerUser = async (user: userInterface) => {
     await findUser(user.username)
     .then((user)=> {
         if(user){
-            const msg = "the given email is already in use..."
+            const msg = "the given username is already in use"
             throw Error(msg)
         } else {
             return UserModel.create({ username, password });
@@ -30,7 +30,26 @@ const registerUser = async (user: userInterface) => {
     )
 }
 
+const loginUser = async (user: userInterface)=> {
+    var {username, password} = user
+    if(!findUser(username)){
+        throw Error('User is not found')
+    } else {
+        await findUser(username)
+    .then(()=>{
+        return Promise.all([UserCompare.comparePass(password), user])
+    })
+    .then((returnedPasswordAndUser)=>{
+        if (!returnedPasswordAndUser[0]) {
+            throw new Error("Invalid Password");
+          }
+          let usr = returnedPasswordAndUser[1]
+            return jwt.CreateToken(usr._id)
+        })
+    }
+}
 
 
-export {registerUser}
+
+export {registerUser, loginUser}
 

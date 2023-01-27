@@ -39,7 +39,9 @@
     "joi": "^17.7.0",
     "jsonwebtoken": "^9.0.0",
     "module-alias": "^2.2.2",
-    "mongoose": "^6.8.3"
+    "mongoose": "^6.8.3",
+    "nocache": "^3.0.4",
+    "path": "^0.12.7"
   },
   "moduleAliases": {
     "@/resources/*": "dist/resources/*",

@@ -24,7 +24,7 @@ export const UserSchema = new Schema(
     { timestamps: true }
 )
 
-UserSchema.methods = {
+export const UserCompare = UserSchema.methods = {
     comparePass(pass:string) {
         return bcrypt.compare(pass, this.password)
     }}

@@ -2,12 +2,14 @@ import express, { Application } from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 dotenv.config()
+import helmet from 'helmet'
 import config from 'config'
 import compression from 'compression'
 import cors from 'cors'
 import Controller from "@/utils/interfaces/controller.interfaces"
 import ErrorMiddleware from "./middleware/error.middleware"
-import helmet from 'helmet'
+import nocache from 'nocache'
+import path from "path"
 
 class App {
     public express: Application;
@@ -18,22 +20,23 @@ class App {
     {
         this.express = express()
         this.port = port
-
-        this.initializeDatabaseConnection()
         this.initializeMiddleware()
+        this.initializeDatabaseConnection()
         this.initializeControllers(controllers)
         this.initializeErrorHandling()
     }
     private initializeMiddleware(): void {
-        this.express.use(helmet);
+        this.express.use(helmet())
+        this.express.use(helmet.frameguard({action:'deny'}));
+        this.express.use(nocache());
         this.express.use(cors);
         this.express.use(express.json());
         this.express.use(express.urlencoded({extended: false}));
-        this.express.use(compression)
+        this.express.use(compression);
     }
-    private initializeControllers(controllers: Controller[] ): void {
+    private initializeControllers(controllers: Controller[]): void {
         controllers.forEach((c: Controller) => {
-            this.express.use('/', c.router)
+            this.express.use(c.router)
         })
     }
     private initializeErrorHandling(){
@@ -65,4 +68,4 @@ class App {
     }
 }
 
-export default App
+module.exports = App
